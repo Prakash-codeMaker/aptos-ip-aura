@@ -168,10 +168,22 @@ const license = await client.createLicense({
               with our comprehensive platform and tools.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="btn-hero">
+              <Button 
+                className="btn-hero"
+                onClick={() => {
+                  const contactSection = document.getElementById('contact');
+                  if (contactSection) {
+                    contactSection.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+              >
                 Get API Access
               </Button>
-              <Button variant="outline" className="btn-outline">
+              <Button 
+                variant="outline" 
+                className="btn-outline"
+                onClick={() => window.open('https://discord.gg/ipchain', '_blank')}
+              >
                 Join Developer Discord
               </Button>
             </div>

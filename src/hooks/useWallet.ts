@@ -35,14 +35,21 @@ export const useWallet = () => {
   // Check if Petra wallet is installed
   useEffect(() => {
     const checkWalletInstallation = () => {
-      const isInstalled = typeof window !== 'undefined' && 'aptos' in window;
+      const isInstalled = typeof window !== 'undefined' && 
+        'aptos' in window && 
+        window.aptos !== undefined;
+      
       setWalletState(prev => ({ ...prev, isInstalled: isInstalled }));
       
       if (isInstalled) {
-        checkConnection();
+        // Add a small delay to ensure wallet is fully initialized
+        setTimeout(() => {
+          checkConnection();
+        }, 100);
       }
     };
 
+    // Check immediately
     checkWalletInstallation();
     
     // Listen for wallet installation
@@ -52,7 +59,13 @@ export const useWallet = () => {
 
     if (typeof window !== 'undefined') {
       window.addEventListener('aptos#initialized', handleWalletChange);
-      return () => window.removeEventListener('aptos#initialized', handleWalletChange);
+      // Also listen for load event in case wallet loads after page
+      window.addEventListener('load', handleWalletChange);
+      
+      return () => {
+        window.removeEventListener('aptos#initialized', handleWalletChange);
+        window.removeEventListener('load', handleWalletChange);
+      };
     }
   }, []);
 
@@ -80,16 +93,24 @@ export const useWallet = () => {
     if (!window.aptos) {
       toast({
         title: "Petra Wallet Not Found",
-        description: "Please install Petra wallet to continue. Visit petra.app",
+        description: "Please install Petra wallet from petra.app and refresh the page.",
         variant: "destructive",
       });
+      // Open Petra website in new tab
+      window.open('https://petra.app/', '_blank');
       return;
     }
 
     setWalletState(prev => ({ ...prev, isConnecting: true }));
 
     try {
-      const response = await window.aptos.connect();
+      // Add timeout to prevent infinite loading
+      const connectPromise = window.aptos.connect();
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Connection timeout')), 30000)
+      );
+
+      const response = await Promise.race([connectPromise, timeoutPromise]) as { address: string; publicKey: string };
       
       setWalletState(prev => ({
         ...prev,
@@ -112,7 +133,13 @@ export const useWallet = () => {
       
       setWalletState(prev => ({ ...prev, isConnecting: false }));
       
-      if (error.code === 4001) {
+      if (error.message === 'Connection timeout') {
+        toast({
+          title: "Connection Timeout",
+          description: "Wallet connection timed out. Please try again.",
+          variant: "destructive",
+        });
+      } else if (error.code === 4001) {
         toast({
           title: "Connection Rejected",
           description: "Please approve the connection request to continue.",
@@ -121,7 +148,7 @@ export const useWallet = () => {
       } else {
         toast({
           title: "Connection Failed",
-          description: "Failed to connect wallet. Please try again.",
+          description: "Failed to connect wallet. Please try again or refresh the page.",
           variant: "destructive",
         });
       }

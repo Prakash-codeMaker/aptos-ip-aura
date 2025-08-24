@@ -91,7 +91,15 @@ export const Features = () => {
         <div className="text-center mt-20">
           <div className="inline-flex items-center px-6 py-3 glass rounded-full border border-brand/30">
             <span className="text-sm font-medium mr-3">Ready to protect your IP?</span>
-            <button className="text-brand hover:text-brand-light transition-colors font-semibold">
+            <button 
+              className="text-brand hover:text-brand-light transition-colors font-semibold"
+              onClick={() => {
+                const homeSection = document.getElementById('home');
+                if (homeSection) {
+                  homeSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+            >
               Start Now →
             </button>
           </div>
