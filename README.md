@@ -1,120 +1,200 @@
-# Welcome to your Lovable project
+IPChain - Decentralized Intellectual Property Registry & Marketplace
+Project Vision
 
-## Project info
+IPChain is a revolutionary decentralized intellectual property management platform built on the Aptos blockchain. It enables creators to instantly prove ownership, tokenize their work, and automate licensing and royalty distribution through smart contracts—all without intermediaries.
 
-**URL**: https://lovable.dev/projects/62ad743d-4879-4aa4-a2c0-47f080fe07c1
+Key Features
+🌟 Key Features
 
-## How can I edit this code?
+Instant IP Registration: Cryptographic hashing and blockchain timestamping.
 
-There are several ways of editing your application.
+Tokenization: Transform IP into dynamic digital assets with flexible monetization.
 
-**Use Lovable**
+Automated Royalties: Smart contract-powered payment distribution.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/62ad743d-4879-4aa4-a2c0-47f080fe07c1) and start prompting.
+Petra Wallet Integration: Secure blockchain interactions.
 
-Changes made via Lovable will be committed automatically to this repo.
+UDAI Compliance: Special integration for Indian creators.
 
-**Use your preferred IDE**
+Advanced Security: Move language smart contracts with inherent security.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Technology Stack
+🛠️ Technology Stack
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Frontend:
 
-Follow these steps:
+Next.js 14 with TypeScript
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Tailwind CSS with custom dark theme
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Framer Motion for animations
 
-# Step 3: Install the necessary dependencies.
-npm i
+Petra Wallet SDK integration
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+Backend:
 
-**Edit a file directly in GitHub**
+Node.js with Express.js
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+PostgreSQL with Prisma ORM
 
-**Use GitHub Codespaces**
+IPFS via Pinata for decentralized storage
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Aptos SDK for blockchain interactions
 
-## What technologies are used for this project?
+Blockchain:
 
-This project is built with:
+Aptos blockchain with Move smart contracts
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Custom IP registry and royalty distribution contracts
 
-## How can I deploy this project?
+Testnet deployment with mainnet readiness
 
-Simply open [Lovable](https://lovable.dev/projects/62ad743d-4879-4aa4-a2c0-47f080fe07c1) and click on Share -> Publish.
+Website Structure
 
-## Can I connect a custom domain to my Lovable project?
+Hero Section: Value proposition with “OWN YOUR CREATION. PROVE IT IN SECONDS.”
 
-Yes, you can!
+Problem Section: Stark statistics about IP theft and inefficiencies.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+Solution Overview: Proof, Protect, Prosper framework.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Interactive How It Works: Expandable steps with detailed technical explanations.
 
-## Supabase: IP claims migration and functions
+India Focus Section: UDAI integration and legal compliance.
 
-This project includes server-side helpers to securely record and verify IP claims using Supabase.
+Roadmap: Visual timeline of milestones and future planning.
 
-1. Create the `ip_claims` table in your Supabase project.
+Final CTA: Early access and whitepaper.
 
-- Open your Supabase project, go to SQL editor, and run the migration SQL in `supabase/migrations/001_create_ip_claims.sql`.
+Website Visuals
 
-2. Deploy the Supabase Edge Function for creating claims
+Home Page:
 
-- The example function is in `supabase/functions/create_claim/index.ts`.
-- This is a Deno function for Supabase Edge runtime. Set environment variables `SUPABASE_URL` and `SUPABASE_SERVICE_KEY` when deploying.
-- The function expects a POST JSON payload { title, description, price, owner, content_hash } and returns either `{ duplicate }` or `{ claim }`.
+ ![WhatsApp Image 2025-08-24 at 11 49 51_36403a91](https://github.com/user-attachments/assets/6af56b37-f0da-4f23-80db-6d51c625a116)
 
-3. Configure the client
+"Protect Your Intellectual Property On-Chain"
 
-- Set `VITE_CREATE_CLAIM_URL` in your `.env` to the deployed function URL (e.g., `https://<project>.functions.supabase.co/create_claim`).
+Features Page:
+![WhatsApp Image 2025-08-24 at 11 50 24_c310db2c](https://github.com/user-attachments/assets/011c8b7f-9a99-4b28-9668-b4d70617422e)
 
-4. Security notes
 
-- Use service role key only on server-side (Edge Function). Do not expose it in client code.
-- Add RLS policies to `ip_claims` if needed to control read/write access.
+Everything you need for IP Management.
 
-### Quick deploy helpers
+Contact Page:
 
-This repo includes helper scripts to run the SQL migration and deploy the Supabase Edge Function.
+![WhatsApp Image 2025-08-24 at 11 51 26_36cc83ff](https://github.com/user-attachments/assets/784a019f-dfdf-43ae-a102-d7ab33f08a99)
 
-- Run migration (bash):
+Get in touch with our team for inquiries.
 
-  SUPABASE_DB_URL="postgres://<user>:<pass>@<host>:5432/<db>" ./supabase/run_migration.sh
+Deployment & Infrastructure
+🚀 Deployment & Infrastructure
 
-- Run migration (PowerShell):
+Production Environment:
 
-  $env:SUPABASE_DB_URL = "postgres://..."
-  .\supabase\run_migration.ps1
+Frontend: Vercel deployment
 
-- Deploy function (bash):
+Backend: Railway/Railway deployment
 
-  SUPABASE_PROJECT_REF=<project-ref> ./supabase/deploy_function.sh
+Database: Neon PostgreSQL with connection pooling
 
-- Deploy function (PowerShell):
+Storage: IPFS via Pinata with dedicated gateway
 
-  $env:SUPABASE_PROJECT_REF = '<project-ref>'
-  .\supabase\deploy_function.ps1
+Blockchain: Aptos Testnet → Mainnet
 
-After deploying, set `VITE_CREATE_CLAIM_URL` in your `.env` to the provided function URL and restart the dev server.
+Wallet Integration
+
+Petra Wallet Features:
+
+One-click connection
+
+Transaction signing for all operations
+
+Real-time state management
+
+Comprehensive error handling
+
+Sample Code:
+
+// Connection handling
+const connectWallet = async () => {
+  try {
+    const response = await window.aptos.connect();
+    const account = await window.aptos.account();
+    setUserAddress(account.address);
+  } catch (error) {
+    console.error('Wallet connection failed:', error);
+  }
+};
+
+Security Features
+
+Move language resource-oriented security
+
+Client-side content hashing (files never leave user device)
+
+Smart contract auditing and formal verification
+
+Roadmap
+
+Q1 2024: MVP launch and UDAI compliance integration
+
+Q2 2024: Mainnet deployment and API integrations
+
+Q3 2024: Legal compliance for international markets
+
+Q4 2024: Full feature rollout including AI-driven IP dispute resolution
+
+Testing Strategy
+
+Unit tests for utility functions
+
+Integration tests for API endpoints
+
+E2E tests for user workflows
+
+Smart contract tests with Move testing framework
+
+Compliance & Legal
+
+Indian Market Focus:
+
+UDAI number validation and linking
+
+Section 65B evidence compliance
+
+IPC and IT Act enforcement readiness
+
+Global Compliance:
+
+GDPR data handling procedures
+
+International copyright law considerations
+
+Cross-border royalty payment handling
+
+Contributing
+
+We welcome contributions! Please see our:
+
+Contribution guidelines
+
+Code of conduct
+
+Development setup instructions
+
+Testing requirements
+
+Support
+
+For support, email support@ipchain.com
+ or join our Discord channel.
+
+License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+IPChain © 2024. Built on Aptos. For the Creators of the World.
+
+Link to Project
+
+For more details, visit IPChain on Netlify- https://ip1-chain.netlify.app/
+.
