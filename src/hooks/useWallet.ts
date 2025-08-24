@@ -32,43 +32,6 @@ export const useWallet = () => {
 
   const { toast } = useToast();
 
-  // Check if Petra wallet is installed
-  useEffect(() => {
-    const checkWalletInstallation = () => {
-      const isInstalled = typeof window !== 'undefined' && 
-        'aptos' in window && 
-        window.aptos !== undefined;
-      
-      setWalletState(prev => ({ ...prev, isInstalled: isInstalled }));
-      
-      if (isInstalled) {
-        // Add a small delay to ensure wallet is fully initialized
-        setTimeout(() => {
-          checkConnection();
-        }, 100);
-      }
-    };
-
-    // Check immediately
-    checkWalletInstallation();
-    
-    // Listen for wallet installation
-    const handleWalletChange = () => {
-      checkWalletInstallation();
-    };
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('aptos#initialized', handleWalletChange);
-      // Also listen for load event in case wallet loads after page
-      window.addEventListener('load', handleWalletChange);
-      
-      return () => {
-        window.removeEventListener('aptos#initialized', handleWalletChange);
-        window.removeEventListener('load', handleWalletChange);
-      };
-    }
-  }, []);
-
   // Check if wallet is already connected
   const checkConnection = useCallback(async () => {
     if (!window.aptos) return;
@@ -88,30 +51,84 @@ export const useWallet = () => {
     }
   }, []);
 
+  // Check if Petra wallet is installed
+  useEffect(() => {
+    const checkWalletInstallation = () => {
+      const isInstalled = typeof window !== 'undefined' &&
+        'aptos' in window &&
+        window.aptos !== undefined;
+
+      setWalletState(prev => ({ ...prev, isInstalled: isInstalled }));
+
+      if (isInstalled) {
+        // Add a small delay to ensure wallet is fully initialized
+        setTimeout(() => {
+          checkConnection();
+        }, 100);
+      }
+    };
+
+    // Check immediately
+    checkWalletInstallation();
+
+    // Listen for wallet installation
+    const handleWalletChange = () => {
+      checkWalletInstallation();
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('aptos#initialized', handleWalletChange);
+      // Also listen for load event in case wallet loads after page
+      window.addEventListener('load', handleWalletChange);
+
+      return () => {
+        window.removeEventListener('aptos#initialized', handleWalletChange);
+        window.removeEventListener('load', handleWalletChange);
+      };
+    }
+  }, [checkConnection]);
+
   // Connect wallet
   const connectWallet = useCallback(async () => {
+    // Wait for the Petra wallet to be injected if not immediately available
     if (!window.aptos) {
-      toast({
-        title: "Petra Wallet Not Found",
-        description: "Please install Petra wallet from petra.app and refresh the page.",
-        variant: "destructive",
-      });
-      // Open Petra website in new tab
-      window.open('https://petra.app/', '_blank');
-      return;
+      let attempts = 0;
+      const maxAttempts = 3;
+      while (!window.aptos && attempts < maxAttempts) {
+        console.log(`Waiting for Petra extension to load... attempt ${attempts + 1}`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        attempts++;
+      }
+      if (!window.aptos) {
+        toast({
+          title: "Petra Wallet Not Found",
+          description: "Please install Petra wallet in your browser and refresh the page.",
+          variant: "destructive",
+        });
+        // do not auto-open external site; user may be on wrong browser
+        return;
+      }
     }
 
     setWalletState(prev => ({ ...prev, isConnecting: true }));
+    console.log("Attempting to connect wallet...");
 
     try {
       // Add timeout to prevent infinite loading
       const connectPromise = window.aptos.connect();
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Connection timeout')), 30000)
-      );
+      let timeoutId: ReturnType<typeof setTimeout> | null = null;
+      const timeoutPromise = new Promise((_, reject) => {
+        timeoutId = setTimeout(() => {
+          console.error("Wallet connection timed out");
+          reject(new Error('Connection timeout'));
+        }, 30000);
+      });
 
       const response = await Promise.race([connectPromise, timeoutPromise]) as { address: string; publicKey: string };
-      
+      if (timeoutId) clearTimeout(timeoutId);
+
+      console.log("Wallet connected successfully:", response);
+
       setWalletState(prev => ({
         ...prev,
         isConnected: true,
@@ -130,9 +147,12 @@ export const useWallet = () => {
 
     } catch (error: any) {
       console.error('Wallet connection error:', error);
-      
+      // Clear stored connection state in case of error
+      localStorage.removeItem('walletConnected');
+      localStorage.removeItem('walletAddress');
+
       setWalletState(prev => ({ ...prev, isConnecting: false }));
-      
+
       if (error.message === 'Connection timeout') {
         toast({
           title: "Connection Timeout",
@@ -145,10 +165,16 @@ export const useWallet = () => {
           description: "Please approve the connection request to continue.",
           variant: "destructive",
         });
+      } else if (error.message && error.message.toLowerCase().includes("forgot")) {
+        toast({
+          title: "Password Issue",
+          description: "It appears you may have forgotten your wallet password. Please reset your password or try signing in with Google.",
+          variant: "destructive",
+        });
       } else {
         toast({
           title: "Connection Failed",
-          description: "Failed to connect wallet. Please try again or refresh the page.",
+          description: "Failed to connect wallet. Please try again or refresh the page. Alternatively, sign in with Google.",
           variant: "destructive",
         });
       }
@@ -228,11 +254,38 @@ export const useWallet = () => {
     }
   }, []);
 
+  // Sign in with Google
+  const signInWithGoogle = useCallback(async () => {
+    console.log("Signing in with Google...");
+    try {
+      // TODO: Implement Google authentication logic (e.g., using Firebase or Google API)
+      // For demonstration, we simulate a successful response.
+      const response = { email: "user@gmail.com", displayName: "User" };
+      setWalletState(prev => ({
+        ...prev,
+        isConnected: true,
+        account: response.email,
+      }));
+      toast({
+        title: "Signed in with Google",
+        description: `Welcome, ${response.displayName}!`,
+      });
+    } catch (error: any) {
+      console.error("Google sign in failed:", error);
+      toast({
+        title: "Google Sign In Failed",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+    }
+  }, [toast]);
+
   return {
     ...walletState,
     connectWallet,
     disconnectWallet,
     signAndSubmitTransaction,
     getNetwork,
+    signInWithGoogle,
   };
 };

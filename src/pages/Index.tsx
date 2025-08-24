@@ -6,6 +6,8 @@ import { Technology } from "@/components/Technology";
 import { Developers } from "@/components/Developers";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
+import { PurchaseIP } from "@/components/PurchaseIP";
+import PurchaseAndClaim from "@/components/PurchaseAndClaim";
 
 const Index = () => {
   const { 
@@ -61,6 +63,8 @@ const Index = () => {
         <Features />
         <Technology />
         <Developers />
+        <PurchaseAndClaim />
+        <PurchaseIP />
         <Contact />
       </main>
       

@@ -117,9 +117,9 @@ const license = await client.createLicense({
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold">Quick Start Example</h3>
               <div className="flex space-x-2">
-                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <div className="w-3 h-3 bg-destructive rounded-full"></div>
+                <div className="w-3 h-3 bg-accent rounded-full"></div>
+                <div className="w-3 h-3 bg-brand rounded-full"></div>
               </div>
             </div>
             
@@ -189,6 +189,23 @@ const license = await client.createLicense({
             </div>
           </div>
         </div>
+
+        {/* New Section: Mandatory API Usage */}
+        <section id="api-usage" className="py-10 bg-background">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold mb-4">Mandatory API Usage</h2>
+            <p className="mb-4 text-muted-foreground">
+              Developers are required to integrate with our provided API endpoints to interact with the Aptos blockchain. This ensures streamlined operations and revenue generation opportunities.
+            </p>
+            <pre className="bg-surface/50 text-muted-foreground p-4 rounded">
+API_KEY: YOUR_API_KEY_HERE
+Endpoint: https://api.yourdomain.com/aptos
+            </pre>
+            <p className="mt-4 text-muted-foreground">
+              Please refer to our API documentation for integration details. Failure to correctly integrate may impact your application's performance.
+            </p>
+          </div>
+        </section>
       </div>
     </section>
   );
