@@ -1,12 +1,70 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useWallet } from "@/hooks/useWallet";
+import { Header } from "@/components/Header";
+import { Hero } from "@/components/Hero";
+import { Features } from "@/components/Features";
+import { Technology } from "@/components/Technology";
+import { Developers } from "@/components/Developers";
+import { Contact } from "@/components/Contact";
+import { Footer } from "@/components/Footer";
 
 const Index = () => {
+  const { 
+    isConnected, 
+    account, 
+    isConnecting, 
+    isInstalled, 
+    connectWallet, 
+    disconnectWallet 
+  } = useWallet();
+
+  const handleGetStarted = () => {
+    if (!isConnected) {
+      connectWallet();
+    } else {
+      // Navigate to dashboard or next step
+      const featuresSection = document.getElementById('features');
+      if (featuresSection) {
+        featuresSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
+  const handleLearnMore = () => {
+    const featuresSection = document.getElementById('features');
+    if (featuresSection) {
+      featuresSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleConnectWallet = () => {
+    if (isConnected) {
+      disconnectWallet();
+    } else {
+      connectWallet();
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <Header 
+        onConnectWallet={handleConnectWallet}
+        isWalletConnected={isConnected}
+        walletAddress={account || undefined}
+        isConnecting={isConnecting}
+      />
+      
+      <main>
+        <Hero 
+          onGetStarted={handleGetStarted}
+          onLearnMore={handleLearnMore}
+        />
+        <Features />
+        <Technology />
+        <Developers />
+        <Contact />
+      </main>
+      
+      <Footer />
     </div>
   );
 };
